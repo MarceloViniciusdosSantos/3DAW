@@ -47,7 +47,6 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST'){
 }
 
 ?>
-
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
