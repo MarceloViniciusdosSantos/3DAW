@@ -99,6 +99,5 @@ $mensagem = isset($_GET['mensagem']) ? $_GET['mensagem'] : "";
 
     <hr>
 
-    <p><a href="index.php">Voltar à Página Inicial</a></p>
 </body>
 </html>
