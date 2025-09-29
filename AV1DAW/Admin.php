@@ -1,124 +1,104 @@
 <?php
-    include "User.php";
-    include "Perguntas.php";
-
-    $usuarios = carregarUser();
-    $perguntas = carregarPerguntas();
-    $mensagem = '';
-
-    if(isset($_POST['action'])){
-        $action = $_POST['action'];
-
-        switch ($action) {
-            case 'criar_perguntaME':
-            $respostas = array_map('trim', explode(',', $_POST['respostas']));
-            $mensagem = criarPerguntaMC($perguntas, $_POST['pergunta'], $respostas, $_POST['correta']);
-            break;
-                
-    case 'criar_perguntaTex':
-            $mensagem = criarPerguntaTexto($perguntas, $_POST['pergunta']);
-            break;
-
-        case 'alterar_mc':
-            $respostas = array_map('trim', explode(',', $_POST['respostas']));
-            $mensagem = alterarPerguntaMC($perguntas, $_POST['index'], $_POST['pergunta'], $respostas, $_POST['correta']);
-            break;
-
-        case 'alterar_texto':
-            $mensagem = alterarPerguntaTexto($perguntas, $_POST['index'], $_POST['pergunta']);
-            break;
-
-        case 'excluir':
-            $mensagem = excluirPergunta($perguntas, $_POST['index']);
-            break;
-
-        case 'listar_uma':
-            $idx = $_POST['index'];
-            if(isset($perguntas[$idx])) $perguntaSelecionada = $perguntas[$idx];
-            else $mensagem = "Pergunta não encontrada";
-            break;
-        }
-          if($action !== 'listar_uma') {
-        header("Location: ".$_SERVER['PHP_SELF']."?mensagem=".urlencode($mensagem));
-        exit();
-    }
-    }
-
-  
-
-if(isset($_GET['mensagem'])) $mensagem = $_GET['mensagem'];
+$mensagem = isset($_GET['mensagem']) ? $_GET['mensagem'] : "";
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>CRUD Perguntas</title>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2 {
+            color: #333;
+        }
+        
+        .mensagem {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .sucesso {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        ul li {
+            margin: 10px 0;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        ul li a:hover {
+            color: #0056b3;
+        }
+        
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+        
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+    <h1><strong>SISTEMA</h1>
 
-<h2>Criar Pergunta MC</h2>
-<form method="POST">
-    <input type="hidden" name="action" value="criar_perguntaME">
-    <label>Pergunta:</label><br><input type="text" name="pergunta" required><br>
-    <label>Respostas:</label><br><input type="text" name="respostas" required><br>
-    <label>Resposta correta:</label><br><input type="text" name="correta" required><br>
-    <button type="submit">Criar MC</button>
-</form>
+    <?php if ($mensagem): ?>
+        <p class="mensagem sucesso"><?php echo htmlspecialchars($mensagem); ?></p>
+    <?php endif; ?>
 
-<h2>Criar Pergunta Texto</h2>
-<form method="POST">
-    <input type="hidden" name="action" value="criar_perguntaTex">
-    <label>Pergunta:</label><br><input type="text" name="pergunta" required><br>
-    <button type="submit">Criar Texto</button>
-</form>
+    <h2>Gerenciar Perguntas</h2>
+    <ul>
+        <li><a href="criar_mc.php">Criar Pergunta de Múltipla Escolha</a></li>
+        <li><a href="criar_texto.php">Criar Pergunta de Texto</a></li>
+        <li><a href="listar.php">Listar Perguntas</a></li>
+    </ul>
 
-<h2>Lista de Todas as Perguntas</h2>
-<?php
-if($mensagem) echo "<p><strong>$mensagem</strong></p>";
+    <h2>Gerenciar Usuários</h2>
+    <ul>
+        <li><a href="criar_user.php">Cadastrar Usuário</a></li>
+        <li><a href="listar_user.php">Listar Usuários</a></li>
+    </ul>
 
-if($perguntas){
-    foreach($perguntas as $i=>$p){
-        echo "<p>#{$i} | Tipo: {$p['tipo']} | Pergunta: {$p['pergunta']}";
-        if($p['tipo']=='mc'){
-            echo " | Respostas: ".implode(', ', $p['respostas']);
-            echo " | Correta: {$p['correta']}";
-        }
-        echo "</p>";
+    <h2>Jogo</h2>
+    <ul>
+        <li><a href="responder_perguntas.php">Responder Perguntas</a></li>
+    </ul>
 
-        // Formulário para excluir
-        echo '<form method="POST" style="display:inline;">
-            <input type="hidden" name="action" value="excluir">
-            <input type="hidden" name="index" value="'.$i.'">
-            <button type="submit">Excluir</button>
-        </form>';
+    <hr>
 
-        // Formulário para listar pergunta
-        echo '<form method="POST" style="display:inline;">
-            <input type="hidden" name="action" value="listar_uma">
-            <input type="hidden" name="index" value="'.$i.'">
-            <button type="submit">Ver Pergunta</button>
-        </form>';
-
-        echo "<hr>";
-    }
-} else {
-    echo "<p>Nenhuma pergunta cadastrada.</p>";
-}
-
-// Exibe a pergunta selecionada (listar uma)
-if($perguntaSelecionada){
-    echo "<h3>Pergunta Selecionada</h3>";
-    echo "<p>Tipo: {$perguntaSelecionada['tipo']}<br>";
-    echo "Pergunta: {$perguntaSelecionada['pergunta']}<br>";
-    if($perguntaSelecionada['tipo']=='mc'){
-        echo "Respostas: ".implode(', ', $perguntaSelecionada['respostas'])."<br>";
-        echo "Correta: {$perguntaSelecionada['correta']}</p>";
-    } else {
-        echo "Resposta: {$perguntaSelecionada['correta']}</p>";
-    }
-}
-?>
-    </body>
+    <p><a href="index.php">Voltar à Página Inicial</a></p>
+</body>
 </html>
-
