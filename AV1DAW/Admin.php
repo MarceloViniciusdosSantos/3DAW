@@ -97,7 +97,5 @@ $mensagem = isset($_GET['mensagem']) ? $_GET['mensagem'] : "";
         <li><a href="responder_perguntas.php">Responder Perguntas</a></li>
     </ul>
 
-    <hr>
-
 </body>
 </html>
