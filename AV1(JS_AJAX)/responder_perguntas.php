@@ -12,12 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $mensagem = "Respostas salvas com sucesso para o usuário ID: " . htmlspecialchars($usuario_id);
     
-    // Para requisições AJAX, apenas retorna a mensagem
+
     echo $mensagem;
     exit;
 }
 
-// Se não for POST, exibe o HTML normal
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
 
-            // Coletar todas as respostas
+      
             let respostas = {};
             let inputs = document.querySelectorAll('input[name^="respostas"]');
             inputs.forEach(function(input) {
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             let msg = "";
             if (usuario_id == "") msg = "Selecione um usuário. <br>";
             
-            // Verificar se todas as perguntas foram respondidas
+    
             let todasRespondidas = true;
             let inputs = document.querySelectorAll('input[name^="respostas"]');
             let perguntasRespondidas = new Set();
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
     <style>
-        /* Estilos mantidos iguais */
+
         .container-table { width: 800px; margin: 0 auto; background-color: #f5f5f5; padding: 20px; }
         .content-table { width: 100%; background: white; padding: 25px; border-radius: 8px; border-left: 4px solid #007bff; }
         .form-table { width: 100%; }

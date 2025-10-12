@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $mensagem = "Usuário não encontrado!";
     }
     
-    // Para requisições AJAX, apenas retorna a mensagem
+
     echo $mensagem;
     exit;
 }

@@ -9,14 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $respostas = array_map('trim', explode(',', $_POST['respostas']));
     $mensagem = alterarPerguntaMC($perguntas, $_POST['index'], $_POST['pergunta'], $respostas, $_POST['correta']);
     
-    // Para requisições AJAX, apenas retorna a mensagem
-    echo $mensagem;
+    
     exit;
 }
 
 $pergunta = ($index >= 0 && isset($perguntas[$index])) ? $perguntas[$index] : null;
 
-// Se não for POST, exibe o HTML normal
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -69,7 +68,7 @@ $pergunta = ($index >= 0 && isset($perguntas[$index])) ? $perguntas[$index] : nu
         }
     </script>
     <style>
-        /* Estilos mantidos iguais */
+    
         .container-table { width: 800px; margin: 0 auto; background-color: #f5f5f5; padding: 20px; }
         .content-table { width: 100%; background: white; padding: 25px; border-radius: 8px; border-left: 4px solid #007bff; }
         .form-table { width: 100%; }

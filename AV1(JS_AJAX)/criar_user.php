@@ -14,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensagem = criarUser($usuarios, $id, $nome);
     }
     
-    // Para requisições AJAX, apenas retorna a mensagem
+ 
     echo $mensagem;
     exit;
 }
 
-// Se não for POST, exibe o HTML normal
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
     <style>
-        /* Estilos mantidos iguais */
+    
         .container-table { width: 800px; margin: 0 auto; background-color: #f5f5f5; padding: 20px; }
         .content-table { width: 100%; background: white; padding: 25px; border-radius: 8px; border-left: 4px solid #007bff; }
         .form-table { width: 100%; }

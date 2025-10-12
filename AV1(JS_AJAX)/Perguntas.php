@@ -11,7 +11,7 @@ function carregarPerguntas(){
         foreach($linhas as $linha){
             $separador = explode('|', $linha);
             
-            // Remove elementos vazios do início do array
+       
             $separador = array_values(array_filter($separador, function($value) {
                 return $value !== '';
             }));
@@ -51,7 +51,7 @@ function salvarPerguntas($perguntas){
     $p = $perguntas[$ultimaIndex];
     
     if($p['tipo'] == 'mE'){
-        // garante que respostas é array antes do implode
+
         $respostas = is_array($p['respostas']) ? implode(',', $p['respostas']) : '';
         
         $linha = '|mE|'.$p['pergunta'].'|'.$respostas.'|'.$p['correta'];

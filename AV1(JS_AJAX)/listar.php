@@ -13,7 +13,7 @@
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     console.log("Resposta: " + this.responseText);
-                    // Recarrega a página para atualizar a lista
+           
                     window.location.href = "listar.php?mensagem=" + encodeURIComponent(this.responseText);
                 }
             }
@@ -22,7 +22,7 @@
         }
     </script>
     <style>
-        /* Estilos mantidos iguais */
+
         .container-table { width: 1200px; margin: 0 auto; background-color: #f5f5f5; padding: 20px; }
         .content-table { width: 100%; background: white; padding: 30px; border-radius: 8px; }
         .mensagem-table { width: 100%; background: #d4edda; padding: 10px; border: 1px solid #c3e6cb; border-radius: 4px; margin: 10px 0; }
