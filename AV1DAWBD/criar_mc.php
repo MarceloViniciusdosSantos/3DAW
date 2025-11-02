@@ -5,9 +5,9 @@ $perguntas = carregarPerguntas();
 $mensagem = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $respostas = array_map('trim', explode(',', $_POST['respostas']));
-    $mensagem = criarPerguntaME($perguntas, $_POST['pergunta'], $respostas, $_POST['correta']);
-    header("Location: listar.php?mensagem=".urlencode($mensagem));
+    $respostas = isset($_POST['respostas']) ? $_POST['respostas'] : [];
+    $mensagem = criarPerguntaME($_POST['pergunta'], $respostas, $_POST['correta']);
+    header("Location: listar.php?mensagem=" . urlencode($mensagem));
     exit;
 }
 ?>

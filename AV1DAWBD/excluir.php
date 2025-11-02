@@ -1,14 +1,18 @@
 <?php
+session_start();
 include "Perguntas.php";
 
-$perguntas = carregarPerguntas();
-$index = isset($_GET['index']) ? intval($_GET['index']) : -1;
-
-if ($index >= 0 && isset($perguntas[$index])) {
-    $mensagem = excluirPergunta($perguntas, $index);
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $mensagem = excluirPergunta($id);
+    
+    // Usar sessão para evitar problemas com URL longa
+    $_SESSION['mensagem'] = $mensagem;
+    header("Location: listar.php");
+    exit;
 } else {
-    $mensagem = "Pergunta não encontrada!!";
+    $_SESSION['mensagem'] = "ID não especificado";
+    header("Location: listar.php");
+    exit;
 }
-
-header("Location: listar.php?mensagem=" . urlencode($mensagem));
-exit;
+?>

@@ -1,15 +1,18 @@
 <?php
+session_start();
 include "User.php";
 
-$usuarios = carregarUser();
-$id = isset($_GET['id']) ? $_GET['id'] : '';
-
-if ($id != '' && isset($usuarios[$id])) {
-    $mensagem = excluirUser($usuarios, $id);
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $mensagem = excluirUser($id);
+    
+    // Usar sessão para evitar problemas com URL longa
+    $_SESSION['mensagem'] = $mensagem;
+    header("Location: listar_user.php");
+    exit;
 } else {
-    $mensagem = "Usuário não encontrado!";
+    $_SESSION['mensagem'] = "ID não especificado";
+    header("Location: listar_user.php");
+    exit;
 }
-
-header("Location: listar_user.php?mensagem=" . urlencode($mensagem));
-exit;
 ?>

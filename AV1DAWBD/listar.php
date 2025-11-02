@@ -1,157 +1,127 @@
 <?php
+session_start();
 include "Perguntas.php";
+
 $perguntas = carregarPerguntas();
-$mensagem = isset($_GET['mensagem']) ? $_GET['mensagem'] : "";
+
+// Obter mensagem da sessão
+$mensagem = isset($_SESSION['mensagem']) ? $_SESSION['mensagem'] : '';
+
+// Limpar mensagem da sessão
+if(isset($_SESSION['mensagem'])) {
+    unset($_SESSION['mensagem']);
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Perguntas</title>
+    <title>Listar Perguntas</title>
     <style>
-        .container-table {
-            width: 1200px;
-            margin: 0 auto;
-            background-color: #f5f5f5;
-            padding: 20px;
+        .container { width: 90%; margin: 0 auto; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .mensagem { 
+            padding: 10px; 
+            background-color: #d4edda; 
+            color: #155724; 
+            border-radius: 4px; 
+            margin-bottom: 20px; 
         }
-        .content-table {
-            width: 100%;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
+        .error { 
+            padding: 10px; 
+            background-color: #f8d7da; 
+            color: #721c24; 
+            border-radius: 4px; 
+            margin-bottom: 20px; 
         }
-        .mensagem-table {
-            width: 100%;
-            background: #d4edda;
-            padding: 10px;
-            border: 1px solid #c3e6cb;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .mensagem-text {
-            color: #155724;
-            font-weight: bold;
-        }
-        .main-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        .main-table th, .main-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        .main-table th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-        .main-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        .actions {
-            white-space: nowrap;
-        }
-        .actions a {
-            color: #007bff;
-            text-decoration: none;
-            margin: 0 5px;
+        .actions a { 
+            margin-right: 10px; 
+            color: #007bff; 
+            text-decoration: none; 
         }
         .link {
             color: #007bff;
             text-decoration: none;
-        }
-        h1, h2 {
-            color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-right: 15px;
         }
     </style>
 </head>
 <body>
-    <table class="container-table">
-        <tr>
-            <td>
-                <table class="content-table">
+    <div class="container">
+        <h2>Lista de Perguntas</h2>
+        
+        <?php if (!empty($mensagem)): ?>
+            <div class="mensagem"><?php echo htmlspecialchars($mensagem); ?></div>
+        <?php endif; ?>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Pergunta</th>
+                    <th>Respostas</th>
+                    <th>Correta</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($perguntas)): ?>
                     <tr>
+                        <td colspan="6" style="text-align: center;">Nenhuma pergunta cadastrada</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($perguntas as $pergunta): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($pergunta['id']); ?></td>
+                        <td><?php echo htmlspecialchars($pergunta['tipo'] == 'mE' ? 'Múltipla Escolha' : 'Texto'); ?></td>
+                        <td><?php echo htmlspecialchars($pergunta['pergunta']); ?></td>
                         <td>
-                            <h2>Lista de Perguntas</h2>
-                            
-                            <?php if($mensagem): ?>
-                                <table class="mensagem-table">
-                                    <tr>
-                                        <td class="mensagem-text"><?php echo htmlspecialchars($mensagem); ?></td>
-                                    </tr>
-                                </table>
-                            <?php endif; ?>
-
-                            <?php if ($perguntas): ?>
-                                <table class="main-table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Tipo</th>
-                                            <th>Pergunta</th>
-                                            <th>Opções/Respostas</th>
-                                            <th>Resposta Correta</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($perguntas as $i => $p): ?>
-                                            <tr>
-                                                <td><?php echo $i; ?></td>
-                                                <td>
-                                                    <?php 
-                                                        if ($p['tipo'] == 'mE') {
-                                                            echo 'Múltipla Escolha';
-                                                        } else {
-                                                            echo 'Texto';
-                                                        }
-                                                    ?>
-                                                </td>
-                                                <td><?php echo htmlspecialchars($p['pergunta']); ?></td>
-                                                <td>
-                                                    <?php if ($p['tipo'] == 'mE' && !empty($p['respostas'])): ?>
-                                                        <?php echo implode(", ", $p['respostas']); ?>
-                                                    <?php else: ?>
-                                                        <em>Pergunta de texto</em>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php if ($p['tipo'] == 'mE'): ?>
-                                                        <?php echo htmlspecialchars($p['correta']); ?>
-                                                    <?php else: ?>
-                                                        <em>Resposta livre</em>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="actions">
-                                                    <a href='ver.php?index=<?php echo $i; ?>'>Ver</a> | 
-                                                    <a href='excluir.php?index=<?php echo $i; ?>' onclick="return confirm('Tem certeza que deseja excluir esta pergunta?')">Excluir</a>
-                                                    <?php if ($p['tipo'] == 'mE'): ?>
-                                                        | <a href='alterar_mc.php?index=<?php echo $i; ?>'>Alterar</a>
-                                                    <?php else: ?>
-                                                        | <a href='alterar_texto.php?index=<?php echo $i; ?>'>Alterar</a>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
+                            <?php if($pergunta['tipo'] == 'mE' && !empty($pergunta['respostas'])): ?>
+                                <ul>
+                                    <?php foreach($pergunta['respostas'] as $resposta): ?>
+                                        <li><?php echo htmlspecialchars($resposta); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
                             <?php else: ?>
-                                <p>Nenhuma pergunta cadastrada.</p>
+                                -
                             <?php endif; ?>
-
-                            <br>
-                            <a href="Admin.php" class="link">Voltar ao Menu Admin</a>
+                        </td>
+                        <td class="actions">
+                            <?php if($pergunta['tipo'] == 'mE'): ?>
+                                <a href="alterar_mc.php?id=<?php echo $pergunta['id']; ?>" class="link">Alterar</a>
+                            <?php else: ?>
+                                <a href="alterar_texto.php?id=<?php echo $pergunta['id']; ?>" class="link">Alterar</a>
+                            <?php endif; ?>
+                            <a href="excluir.php?id=<?php echo $pergunta['id']; ?>" 
+                            onclick="return confirm('Tem certeza que deseja excluir esta pergunta?')">
+                                Excluir
+                            </a>
+                        </td>
+                        <td>
+                            <?php if($pergunta['tipo'] == 'mE'): ?>
+                                <?php echo htmlspecialchars($pergunta['correta']); ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                        <td class="actions">
+                            <a href="excluir.php?id=<?php echo $pergunta['id']; ?>" 
+                               onclick="return confirm('Tem certeza que deseja excluir esta pergunta?')">
+                                Excluir
+                            </a>
                         </td>
                     </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        
+        <br>
+        <a href="Admin.php" class="link">Voltar ao Menu Admin</a>
+    </div>
 </body>
 </html>

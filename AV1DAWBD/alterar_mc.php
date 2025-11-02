@@ -1,18 +1,38 @@
 <?php
+session_start();
 include "Perguntas.php";
 
 $perguntas = carregarPerguntas();
-$index = isset($_GET['index']) ? intval($_GET['index']) : -1;
+$id = isset($_GET['id']) ? intval($_GET['id']) : -1;
 $mensagem = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $respostas = array_map('trim', explode(',', $_POST['respostas']));
-    $mensagem = alterarPerguntaMC($perguntas, $_POST['index'], $_POST['pergunta'], $respostas, $_POST['correta']);
-    header("Location: listar.php?mensagem=" . urlencode($mensagem));
-    exit;
+// Encontrar a pergunta pelo ID
+$pergunta = null;
+foreach ($perguntas as $p) {
+    if ($p['id'] == $id && $p['tipo'] == 'mE') {
+        $pergunta = $p;
+        break;
+    }
 }
 
-$pergunta = ($index >= 0 && isset($perguntas[$index])) ? $perguntas[$index] : null;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = intval($_POST['id']);
+    $pergunta_texto = trim($_POST['pergunta']);
+    $respostas = array_map('trim', explode(',', $_POST['respostas']));
+    $correta = trim($_POST['correta']);
+    
+    if (empty($pergunta_texto) || empty($respostas) || empty($correta)) {
+        $_SESSION['mensagem'] = "Todos os campos são obrigatórios!";
+        $_SESSION['tipo_mensagem'] = 'erro';
+    } else {
+        $resultado = alterarPerguntaMC($id, $pergunta_texto, $respostas, $correta);
+        $_SESSION['mensagem'] = $resultado;
+        $_SESSION['tipo_mensagem'] = 'sucesso';
+    }
+    
+    header("Location: listar.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -76,6 +96,13 @@ $pergunta = ($index >= 0 && isset($perguntas[$index])) ? $perguntas[$index] : nu
         h1, h2 {
             color: #333;
         }
+        .mensagem {
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -87,9 +114,14 @@ $pergunta = ($index >= 0 && isset($perguntas[$index])) ? $perguntas[$index] : nu
                         <td>
                             <h2>Alterar Pergunta Múltipla Escolha</h2>
                             
-                            <?php if ($pergunta && $pergunta['tipo'] == 'mE'): ?>
+                            <?php if (isset($_SESSION['mensagem'])): ?>
+                                <div class="mensagem"><?php echo htmlspecialchars($_SESSION['mensagem']); ?></div>
+                                <?php unset($_SESSION['mensagem']); ?>
+                            <?php endif; ?>
+                            
+                            <?php if ($pergunta): ?>
                             <form method="POST">
-                                <input type="hidden" name="index" value="<?php echo $index; ?>">
+                                <input type="hidden" name="id" value="<?php echo $pergunta['id']; ?>">
                                 <table class="form-table">
                                     <tr>
                                         <td>
@@ -100,13 +132,15 @@ $pergunta = ($index >= 0 && isset($perguntas[$index])) ? $perguntas[$index] : nu
                                     <tr>
                                         <td>
                                             <label>Respostas (separadas por vírgula):</label>
-                                            <input type="text" name="respostas" value="<?php echo implode(',', $pergunta['respostas']); ?>" required>
+                                            <input type="text" name="respostas" value="<?php echo htmlspecialchars(implode(', ', $pergunta['respostas'])); ?>" required>
+                                            <small style="color: #666;">Exemplo: Resposta A, Resposta B, Resposta C</small>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <label>Resposta correta:</label>
                                             <input type="text" name="correta" value="<?php echo htmlspecialchars($pergunta['correta']); ?>" required>
+                                            <small style="color: #666;">Digite exatamente uma das respostas acima</small>
                                         </td>
                                     </tr>
                                     <tr>

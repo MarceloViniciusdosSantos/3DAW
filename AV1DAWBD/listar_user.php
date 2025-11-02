@@ -1,7 +1,15 @@
 <?php
+session_start();
 include "User.php";
+
 $usuarios = carregarUser();
-$mensagem = isset($_GET['mensagem']) ? $_GET['mensagem'] : "";
+
+// Obter mensagem da sessão em vez de GET
+$mensagem = isset($_SESSION['mensagem']) ? $_SESSION['mensagem'] : "";
+// Limpar mensagem da sessão após usar
+if(isset($_SESSION['mensagem'])) {
+    unset($_SESSION['mensagem']);
+}
 ?>
 <!DOCTYPE html>
 <html>

@@ -1,3 +1,14 @@
+<?php
+include "Perguntas.php";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $pergunta = $_POST['pergunta'];
+    $mensagem = criarPerguntaTexto($pergunta);
+    echo $mensagem;
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +29,7 @@
         if (this.readyState == 4 && this.status == 200) {
             console.log("Chegou a resposta OK: " + this.responseText);
             // REDIRECIONA APÓS RECEBER A RESPOSTA
-            window.location.href = "listar.php?mensagem=" + encodeURIComponent(this.responseText);
+           window.location.href = "listar.php";
         } else if (this.readyState < 4) {
             console.log("Carregando: " + this.readyState);
         } else {

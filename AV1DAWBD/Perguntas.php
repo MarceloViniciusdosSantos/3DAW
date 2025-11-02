@@ -9,7 +9,7 @@ function carregarPerguntas(){
     
     $conn = new mysqli($servidor, $username, $senha, $database);
     if ($conn->connect_error) {
-        die("Conexao falhou, avise o administrador do sistema");
+        die("Conexão falhou!");
     }
     
     $comandoSQL = "SELECT * FROM Perguntas";
@@ -18,7 +18,6 @@ function carregarPerguntas(){
     $perguntas = [];
     if ($resultado->num_rows > 0) {
         while($row = $resultado->fetch_assoc()) {
-
             if($row['tipo'] == 'mE' && !empty($row['respostas'])) {
                 $row['respostas'] = explode(',', $row['respostas']);
             } else {
@@ -31,41 +30,16 @@ function carregarPerguntas(){
     return $perguntas;
 }
 
-function salvarPerguntas($perguntas){
-
-    $arq = fopen(Perguntas_FILE, 'a');
-    if(!$arq) return "erro ao abrir o arquivo";
-
-    $ultimaIndex = count($perguntas) - 1;
-    $p = $perguntas[$ultimaIndex];
-    
-    if($p['tipo'] == 'mE'){
-
-        $respostas = is_array($p['respostas']) ? implode(',', $p['respostas']) : '';
-        
-        $linha = '|mE|'.$p['pergunta'].'|'.$respostas.'|'.$p['correta'];
-    } else {
-        $linha = '|texto|'.$p['pergunta'];
-    }
-
-    fwrite($arq, $linha . PHP_EOL);
-    
-    fclose($arq);
-    return "Pergunta salva com sucesso!";
-}
-
 function criarPerguntaME($pergunta, $respostas, $correta){
     global $servidor, $username, $senha, $database;
     
     $conn = new mysqli($servidor, $username, $senha, $database);
     if ($conn->connect_error) {
-        die("Conexao falhou, avise o administrador do sistema");
+        die("Conexão falhou!");
     }
     
-    // Converte array de respostas para string separada por vírgulas
     $respostas_str = is_array($respostas) ? implode(',', $respostas) : $respostas;
     
-    // Previne SQL injection
     $pergunta = $conn->real_escape_string($pergunta);
     $respostas_str = $conn->real_escape_string($respostas_str);
     $correta = $conn->real_escape_string($correta);
@@ -86,8 +60,10 @@ function criarPerguntaTexto($pergunta){
     
     $conn = new mysqli($servidor, $username, $senha, $database);
     if ($conn->connect_error) {
-        die("Conexao falhou, avise o administrador do sistema");
+        die("Conexão falhou!");
     }
+    
+    $pergunta = $conn->real_escape_string($pergunta);
     
     $comandoSQL = "INSERT INTO Perguntas (tipo, pergunta) VALUES ('texto', '$pergunta')";
     $resultado = $conn->query($comandoSQL);
@@ -99,66 +75,88 @@ function criarPerguntaTexto($pergunta){
         return "Erro ao cadastrar pergunta: " . $conn->error;
     }
 }
-
-
-function alterarPerguntaMC(&$perguntas, $index, $pergunta, $respostas, $correta){
-    if (!isset($perguntas[$index]) || $perguntas[$index]['tipo'] != 'mE') {
+function alterarPerguntaMC($id, $pergunta, $respostas, $correta){
+    global $servidor, $username, $senha, $database;
+    
+    $conn = new mysqli($servidor, $username, $senha, $database);
+    if ($conn->connect_error) {
+        die("Conexão falhou!");
+    }
+    
+    // Verifica se a pergunta é do tipo mE
+    $comandoSQL = "SELECT id FROM Perguntas WHERE id = $id AND tipo = 'mE'";
+    $resultado = $conn->query($comandoSQL);
+    
+    if($resultado->num_rows == 0) {
+        $conn->close();
         return "Pergunta não encontrada ou tipo incorreto";
     }
     
-    $perguntas[$index] = [
-        'tipo' => 'mE', 
-        'pergunta' => $pergunta, 
-        'respostas'=> $respostas,
-        'correta'=> $correta
-    ];
+    $respostas_str = is_array($respostas) ? implode(',', $respostas) : $respostas;
     
-    return sobrescreverPerguntas($perguntas);
+    $pergunta = $conn->real_escape_string($pergunta);
+    $respostas_str = $conn->real_escape_string($respostas_str);
+    $correta = $conn->real_escape_string($correta);
+    
+    $comandoSQL = "UPDATE Perguntas SET pergunta = '$pergunta', respostas = '$respostas_str', correta = '$correta' WHERE id = $id";
+    $resultado = $conn->query($comandoSQL);
+    $conn->close();
+    
+    if($resultado === true) {
+        return "Pergunta alterada com sucesso!";
+    } else {
+        return "Erro ao alterar pergunta";
+    }
 }
 
-function alterarPerguntaTexto(&$perguntas, $index, $pergunta){
-    if (!isset($perguntas[$index]) || $perguntas[$index]["tipo"] != "texto") {
-        return "Pergunta não encontrada ou tipo errado";
+function alterarPerguntaTexto($id, $pergunta){
+    global $servidor, $username, $senha, $database;
+    
+    $conn = new mysqli($servidor, $username, $senha, $database);
+    if ($conn->connect_error) {
+        die("Conexão falhou!");
     }
     
-    $perguntas[$index] = [
-        'tipo' => 'texto', 
-        'pergunta' => $pergunta
-    ];
+    // Verifica se a pergunta é do tipo texto
+    $comandoSQL = "SELECT id FROM Perguntas WHERE id = $id AND tipo = 'texto'";
+    $resultado = $conn->query($comandoSQL);
     
-   
-    return sobrescreverPerguntas($perguntas);
+    if($resultado->num_rows == 0) {
+        $conn->close();
+        return "Pergunta não encontrada ou tipo incorreto";
+    }
+    
+    $pergunta = $conn->real_escape_string($pergunta);
+    
+    $comandoSQL = "UPDATE Perguntas SET pergunta = '$pergunta' WHERE id = $id";
+    $resultado = $conn->query($comandoSQL);
+    $conn->close();
+    
+    if($resultado === true) {
+        return "Pergunta alterada com sucesso!";
+    } else {
+        return "Erro ao alterar pergunta";
+    }
 }
 
-function excluirPergunta(&$perguntas, $index){
-    if(isset($perguntas[$index])){
-        unset($perguntas[$index]);
-        
-        $perguntas = array_values($perguntas);
-        
-        return sobrescreverPerguntas($perguntas);
+
+function excluirPergunta($id){
+    global $servidor, $username, $senha, $database;
+    
+    $conn = new mysqli($servidor, $username, $senha, $database);
+    if ($conn->connect_error) {
+        die("Conexão falhou!");
+    }
+    
+    $comandoSQL = "DELETE FROM Perguntas WHERE id = $id";
+    $resultado = $conn->query($comandoSQL);
+       if($resultado === true && $conn->affected_rows > 0) {
+        return "Pergunta excluída com sucesso!";
     } else {
         return "Pergunta não encontrada!";
     }
-}
-
-
-function sobrescreverPerguntas($perguntas){
-    $arq = fopen(Perguntas_FILE, 'w');
-    if(!$arq) return "erro ao abrir o arquivo";
-
-    foreach($perguntas as $p){
-        if($p['tipo'] == 'mE'){
-            $respostas = is_array($p['respostas']) ? implode(',', $p['respostas']) : '';
-            $linha = '|mE|'.$p['pergunta'].'|'.$respostas.'|'.$p['correta'];
-        } else {
-            $linha = '|texto|'.$p['pergunta'];
-        }
-
-        fwrite($arq, $linha . PHP_EOL);
-    }
+    $conn->close();
     
-    fclose($arq);
-    return "Operação realizada com sucesso!";
+ 
 }
 ?>

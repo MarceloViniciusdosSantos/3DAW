@@ -66,13 +66,24 @@ function criarUser(&$usuario, $id, $nome){
     }
 }
 
-function excluirUser(&$usuarios, $id){
-    if(isset($usuarios[$id])){
-        unset($usuarios[$id]);
-        salvarUser($usuarios);
+function excluirUser($id){
+    global $servidor, $username, $senha, $database;
+    
+    $conn = new mysqli($servidor, $username, $senha, $database);
+    if ($conn->connect_error) {
+        die("Conexao falhou, avise o administrador do sistema");
+    }
+    
+    $comandoSQL = "DELETE FROM User WHERE id = '" . $id . "'";
+    $resultado = $conn->query($comandoSQL);
+    
+     if($resultado === true && $conn->affected_rows > 0) {
         return "Usuário excluído com sucesso!";
     } else {
         return "Usuário não encontrado!";
     }
+    $conn->close();
+    
+   
 }
 ?>
