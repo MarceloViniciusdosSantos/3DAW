@@ -1,0 +1,6 @@
+Folders: app; assets; database; public
+
+app: Auth.php; Ticket.php; User.php - Principais operações utilizando BD
+assets: Css; js; images - Pastas relacionadas à visualização do site
+database: connection; SQL - Conecta e executa o BD
+Public: Arquivos php; views(arquivos html) - O site propriamente dito
