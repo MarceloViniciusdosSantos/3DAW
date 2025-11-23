@@ -59,12 +59,6 @@ CREATE TABLE drivers (
   FOREIGN KEY (bus_id) REFERENCES buses(id) ON DELETE SET NULL
 );
 
-INSERT INTO drivers (name, years_experience, phone, bus_id, photo) VALUES
-('Samuel Gomes', 3, '11999990000', 1, ''),
-('Renato Garcia', 6, '11999990001', 2, ''),
-('Fábio Souza', 1, '11999990002', NULL, ''),
-('Lucas da Silva', 3, '11999990003', NULL, '');
-
 INSERT INTO routes (origin,destination,base_price,duration_minutes) VALUES
 ('São Paulo','Rio de Janeiro',69.00,270),
 ('Salvador','Jericoacoara',199.90,600),
