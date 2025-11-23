@@ -1,5 +1,5 @@
 <style>
-/* ESTILOS DO FORMULÁRIO - TEMA ESCURO */
+/*STYLE AQUI PORQUE ESTAVA DANDO CONFLITO QUANDO COLOCADO NO STYLE.CSS*/
 .form-container {
     max-width: 450px;
     width: 100%;
