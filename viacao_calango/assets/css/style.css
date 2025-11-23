@@ -315,7 +315,7 @@ nav a{margin:0 8px;
 .route-map {
     height: 200px;
     width: 100%;
-    background: #f8f9fa;
+    background: #101011;
     border-radius: 8px;
     overflow: hidden;
     position: relative;
@@ -332,7 +332,7 @@ nav a{margin:0 8px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #f8f9fa;
+    background: #050505;
     color: #666;
 }
 
@@ -355,7 +355,7 @@ nav a{margin:0 8px;
     padding: 20px;
     text-align: center;
     color: #666;
-    background: #f8f9fa;
+    background: #0b0b0c;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -369,7 +369,7 @@ nav a{margin:0 8px;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    background: white;
+    background: rgb(26, 22, 22);
 }
 
 .travel-header {
@@ -381,7 +381,7 @@ nav a{margin:0 8px;
 
 .travel-header h3 {
     margin: 0;
-    color: #333;
+    color: #eee9bd;
 }
 
 .duration {

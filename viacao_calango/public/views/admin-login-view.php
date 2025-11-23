@@ -1,5 +1,6 @@
+
 <style>
-/*STYLE AQUI PORQUE ESTAVA DANDO CONFLITO QUANDO COLOCADO NO STYLE.CSS*/
+/* Reutilizando os mesmos estilos do login padrão */
 .form-container {
     max-width: 450px;
     width: 100%;
@@ -98,27 +99,32 @@
     border: 1px solid #c0392b;
 }
 
-.form-message.success {
-    background: rgba(39, 174, 96, 0.2);
-    color: #2ecc71;
-    border: 1px solid #27ae60;
+.admin-notice {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid #D4AF37;
+    border-radius: 6px;
+    color: #D4AF37;
+    font-size: 14px;
 }
 
-.admin-login-link {
+.back-link {
     text-align: center;
     margin-top: 20px;
     padding-top: 20px;
     border-top: 1px solid #333;
 }
 
-.admin-login-link a {
+.back-link a {
     color: #D4AF37;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
 }
 
-.admin-login-link a:hover {
+.back-link a:hover {
     color: #FFD700;
     text-decoration: underline;
 }
@@ -132,25 +138,26 @@
 </style>
 
 <div class="form-container">
-  <h2>Entrar</h2>
-  <?php if(!empty($_GET['registered'])): ?>
-    <div class="form-message success">Cadastro efetuado. Faça login.</div>
-  <?php endif; ?>
+  <h2>Login Administrativo</h2>
   <?php if(isset($error) && $error): ?>
     <div class="form-message error"><?php echo htmlspecialchars($error); ?></div>
   <?php endif; ?>
   
-  <form method="post" action="<?php echo $base_path; ?>/login.php">
-    <label>CPF ou Email</label>
-    <input name="email" type="text" placeholder="seu@email.com ou 000.000.000-00" required/>
+  <form method="post" action="<?php echo $base_path; ?>/admin-login.php">
+    <label>Usuário</label>
+    <input name="username" type="text" placeholder="Digite o usuário admin" required/>
     
     <label>Senha</label>
-    <input name="password" type="password" placeholder="Digite sua senha" required/>
+    <input name="password" type="password" placeholder="Digite a senha admin" required/>
     
-    <button type="submit">ENTRAR</button>
+    <button type="submit">ACESSAR PAINEL ADMIN</button>
   </form>
   
-  <div class="admin-login-link">
-    <a href="<?php echo $base_path; ?>/admin-login.php">Sou um administrador</a>
+  <div class="admin-notice">
+    <strong>Acesso restrito:</strong> Esta área é exclusiva para administradores do sistema.
+  </div>
+  
+  <div class="back-link">
+    <a href="<?php echo $base_path; ?>/login.php">← Voltar para login comum</a>
   </div>
 </div>
