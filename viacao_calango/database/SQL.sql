@@ -48,6 +48,23 @@ CREATE TABLE tickets (
   FOREIGN KEY (seat_type_id) REFERENCES seat_types(id) ON DELETE CASCADE
 );
 
+CREATE TABLE drivers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  years_experience INT DEFAULT 0,
+  phone VARCHAR(40),
+  bus_id INT DEFAULT NULL,
+  photo VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (bus_id) REFERENCES buses(id) ON DELETE SET NULL
+);
+
+INSERT INTO drivers (name, years_experience, phone, bus_id, photo) VALUES
+('Samuel Gomes', 3, '11999990000', 1, ''),
+('Renato Garcia', 6, '11999990001', 2, ''),
+('Fábio Souza', 1, '11999990002', NULL, ''),
+('Lucas da Silva', 3, '11999990003', NULL, '');
+
 INSERT INTO routes (origin,destination,base_price,duration_minutes) VALUES
 ('São Paulo','Rio de Janeiro',69.00,270),
 ('Salvador','Jericoacoara',199.90,600),

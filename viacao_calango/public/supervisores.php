@@ -1,0 +1,10 @@
+<?php
+require_once __DIR__.'/../config.php';
+$title = 'Supervisores';
+
+$currentCity = $_SESSION['city'] ?? "Selecione uma localidade";
+
+include __DIR__.'/views/adminhead.php';
+include __DIR__.'/views/supervisores.php';
+include __DIR__.'/views/footer.php';
+?>
